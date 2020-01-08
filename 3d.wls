@@ -25,16 +25,20 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 (* shape = "Octahedron"; *)
 (* shape = "Icosahedron"; *)
 (* shape = "Cube"; *)
-shape = "Dodecahedron";
+(* shape = "Dodecahedron"; *)
+(* shape = "Cuboctahedron"; *)
+shape = "Icosidodecahedron";
 
-For[intersectionLevel = 2, intersectionLevel <= 10, intersectionLevel++,
+For[intersectionLevel = 2, intersectionLevel <= 15, intersectionLevel++,
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
 
     plotRangeMap = <|
         "Octahedron" -> 1,
         "Cube" -> 1.5 - intersectionLevel * 0.025,
         "Icosahedron" -> 2.2 - intersectionLevel * 0.1,
-        "Dodecahedron" -> 3.2 - intersectionLevel * 0.2
+        "Dodecahedron" -> 3.2 - intersectionLevel * 0.2,
+        "Cuboctahedron" -> 2.0 - intersectionLevel * 0.07,
+        "Icosidodecahedron" -> 3.2 - intersectionLevel * 0.1
     |>;
     plotRange = plotRangeMap[shape];
 
@@ -42,7 +46,9 @@ For[intersectionLevel = 2, intersectionLevel <= 10, intersectionLevel++,
         "Octahedron" -> {5, -3, 1},
         "Cube" -> {4, -3, 2},
         "Icosahedron" -> {2, -3, 2}*3,
-        "Dodecahedron" -> {2, -3, 2}*3
+        "Dodecahedron" -> {2, -3, 2}*3,
+        "Cuboctahedron" -> {5, -3, 1},
+        "Icosidodecahedron" -> {2, -3, 2}*3
     |>;
 
     viewPoint = viewPointMap[shape];
