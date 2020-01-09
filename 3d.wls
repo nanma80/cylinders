@@ -29,7 +29,7 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 (* shape = "Cuboctahedron"; *)
 shape = "Icosidodecahedron";
 
-For[intersectionLevel = 2, intersectionLevel <= 15, intersectionLevel++,
+For[intersectionLevel = 15, intersectionLevel >= 5, intersectionLevel--,
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
 
     plotRangeMap = <|
