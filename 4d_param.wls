@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 
 exportToPov = True;
-plotPoints = 40;
+plotPoints = 20;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 0.9;
@@ -11,13 +11,13 @@ start = AbsoluteTime[];
 Needs["POVRayRender`"];
 ConfigurePOVRayRender["POVRayPath" -> "C:\\Program Files\\POV-Ray\\v3.7\\bin\\pvengine64.exe"];
 
+getOrthDirections[direction_] := Orthogonalize[{direction, {2, -1.4, 0.3, 0.12}, {0, 1, 2.3, 0.23}, {1.2, -0.3, 1.7, 3.2}}];
+constraint[x_, y_, z_, w_, direction_] := {x,y,z,w}.{x,y,z,w} - ({x,y,z,w}.direction)^2/(direction.direction) - r^2;
+insideConstraint[x_, y_, z_, w_, vertices_, verticesIndices_] := 
+    Apply[And, Map[constraint[x, y, z, w, vertices[[ # ]] ] <= 0&, verticesIndices]];
 
-constraint[x_, y_, z_, direction_] := {x,y,z}.{x,y,z} - ({x,y,z}.direction)^2/(direction.direction) - r^2;
-insideConstraint[x_, y_, z_, vertices_, verticesIndices_] := 
-    Apply[And, Map[constraint[x, y, z, vertices[[ # ]] ] <= 0&, verticesIndices]];
-
-outsideConstraint[x_, y_, z_, vertices_, verticesIndices_] := 
-    Apply[And, Map[constraint[x, y, z, vertices[[ # ]] ] >= 0&, verticesIndices]];
+outsideConstraint[x_, y_, z_, w_, vertices_, verticesIndices_] := 
+    Apply[And, Map[constraint[x, y, z, w, vertices[[ # ]] ] >= 0&, verticesIndices]];
 
 
 colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Purple}, RandomColor[100]];
@@ -32,15 +32,6 @@ shape = "Octahedron";
 For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
 
-    plotRangeMap = <|
-        "Octahedron" -> 1,
-        "Cube" -> 1.5 - intersectionLevel * 0.025,
-        "Icosahedron" -> 2.2 - intersectionLevel * 0.1,
-        "Dodecahedron" -> 3.2 - intersectionLevel * 0.2,
-        "Cuboctahedron" -> 2.0 - intersectionLevel * 0.07,
-        "Icosidodecahedron" -> 3.2 - intersectionLevel * 0.1
-    |>;
-    plotRange = plotRangeMap[shape];
 
     viewPointMap = <|
         "Octahedron" -> {5, -3, 1},
@@ -52,9 +43,10 @@ For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
     |>;
 
     viewPoint = viewPointMap[shape];
+    (* vertices = PolyhedronData[shape, "VertexCoordinates"]; *)
 
-    vertices = PolyhedronData[shape, "VertexCoordinates"];
-    vertices = Select[vertices, #.{0.1, 0.123, 0.23} >= 0 &];
+    vertices = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+    vertices = Select[vertices, #.{0.1, 0.123, 0.23, 0.26} >= 0 &];
     Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
     indicesList = {};
@@ -68,33 +60,42 @@ For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
 
     (* indicesList = { indicesList[[1]], indicesList[[2]] }; *)
 
+
     Print["Segments to plot: " <> IntegerString[Length[indicesList]]];
-    (* Print[indicesList]; *)
+
+    allDirections = Map[getOrthDirections, vertices];
 
     plots = Map[
-                ContourPlot3D[constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]] ] == 0, 
-                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
-                    Axes -> None, BoundaryStyle -> Red, 
+                ParametricPlot3D[
+                    (allDirections[[#[[1]][[1]]]][[2]] Cos[phi] Sin[theta] r +
+                    allDirections[[#[[1]][[1]]]][[3]] Sin[phi] Sin[theta] r +
+                    allDirections[[#[[1]][[1]]]][[3]] Cos[theta] r +
+                    allDirections[[#[[1]][[1]]]][[1]] * l)[[{1, 2, 3}]],
+                    {phi, 0, 2 Pi}, {theta, 0, Pi}, {l, -5, 5},
+                    Axes -> None, 
+                    BoundaryStyle -> Directive[Red, Thick], 
+                    Mesh -> None,
                     PlotPoints -> plotPoints, 
                     MaxRecursion -> maxRecursion,
                     ViewPoint -> viewPoint,
                     Lighting -> lighting,
-                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[#[[4]]] , Opacity[opacity] } },
+                    PlotStyle -> { Lighter[#[[4]]] , Opacity[opacity] },
+                    PlotRange -> All,
                     RegionFunction -> Function[
-                        {x, y, z},
-                        insideConstraint[x, y, z, vertices, #[[2]] ] &&
-                        outsideConstraint[x, y, z, vertices, #[[3]] ]
+                        {x, y, z, phi, theta, l},
+                        insideConstraint[x, y, z, 0, vertices, #[[2]] ] &&
+                        outsideConstraint[x, y, z, 0, vertices, #[[3]] ]
                     ]
                 ]&,
             indicesList];
 
-
     Print["creating graph"];
     graph = Apply[Show, plots];
+    (* graph = plots[[1]]; *)
     Print["created graph"];
 
     outputFolder = "output/";
-    outputFileName = outputFolder <> shape <> "_surface_" <> If[exportToPov, "pov_", "native_"] <> IntegerString[Length[cylinders]] <> "_" <> IntegerString[intersectionLevel] <>  "_" <> IntegerString[plotPoints] <> ".png";
+    outputFileName = outputFolder <> shape <> "_param_" <> If[exportToPov, "pov_", "native_"] <> IntegerString[Length[cylinders]] <> "_" <> IntegerString[intersectionLevel] <>  "_" <> IntegerString[plotPoints] <> ".png";
 
     imageSize = {600, 450};
         cropCommand = "mogrify -crop " <> IntegerString[imageSize[[2]]] <> "x" <> IntegerString[imageSize[[2]]] <> "+" <> IntegerString[(imageSize[[1]]-imageSize[[2]])/2] <> "+0 " <> outputFileName;
