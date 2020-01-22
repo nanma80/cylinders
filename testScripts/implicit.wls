@@ -4,8 +4,8 @@ exportToPov = True;
 plotPoints = 50;
 intersectionLevel = 2;
 (* shape = "Octahedron"; *)
-shape = "Icosahedron";
-(* shape = "Cube"; *)
+(* shape = "Icosahedron"; *)
+shape = "Cube";
 
 r = 1;
 len = 10;
@@ -16,16 +16,6 @@ If[implicitRegion,
     ImplicitRegion[Norm[{x,y,z}]^2 - ({x, y, z}.direction)^2/Norm[direction]^2 <= r^2 && ({x, y, z}.direction)^2/Norm[direction]^2 <= len^2, {x, y, z}],
     Cylinder[{-direction/Norm[direction] * len, direction/Norm[direction] * len}, r]
 ];
-
-Needs["POVRayRender`"];
-ConfigurePOVRayRender["POVRayPath" -> "C:\\Program Files\\POV-Ray\\v3.7\\bin\\pvengine64.exe"];
-
-(* cylinders = {
-    cylinder[{1, 0, 0}],
-    cylinder[{0, 1, 0}],
-    cylinder[{0, 0, 1}]
-};
- *)
 
 vertices = PolyhedronData[shape, "VertexCoordinates"];
 vertices = Select[vertices, #.{0.1, 0.123, 0.23} > 0 &];

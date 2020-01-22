@@ -1,0 +1,106 @@
+I saw the first examples of such shapes from this post by TER: https://twistypuzzles.com/forum/viewtopic.php?f=15&t=30904
+
+Here are some numerical values of the volumes and areas calculated by the CAD software, Fusion 360. The models were used to 3D print them.
+
+n=3 cylinders, octahedral symmetry, radius = 1. V: volume; A: area.
+
+k=3: V = 4.685; A = 14.055
+The analytical values according to https://en.wikipedia.org/wiki/Steinmetz_solid#Tricylinder are as follows
+V=8*(2-sqrt(2))=4.686...
+A=24*(2-sqrt(2))=14.059...
+Since the numbers agree to three digits, I will only keep three digits from the numerical values in the other shapes.
+
+k=2: V=6.63; A=19.9. 
+WolframScript: V=16*(-1 + Sqrt[2]), 6.627416997969522
+
+k=1: the volume depends on the lengths of the cylinders. I choose to skip it.
+
+n=6 cylinders, icosahedral symmetry
+k=2: V=14.5; A=43.6
+
+k=3: V=8.98; A=26.9
+
+k=4: V=5.55; A=16.7
+
+k=5: V=4.60; A=13.8
+
+k=6: V=4.38; A=13.1
+
+
+n=4, octahedral symmetry:
+
+k=2: V=9.80; A=29.4
+WolframScript: V=9.797959401513328, A=20.009436659437686
+k=3: V=5.25; A=15.8
+WolframScript: V=5.250710637330093, A=14.53979089874608
+k=4: V=4.55; A=13.6
+The analytical value according to: http://paulbourke.net/geometry/cylinders/ is:
+V = 12*(sqrt(8) - sqrt(6)) = 4.547
+WolframScript: V=4.547248539654532, A=13.121033059013369
+
+===
+n=6:
+k=2:
+radius: 27.528mm
+V:3.031*10^5/27.528^3=14.53
+A:3.303*10^4/27.528^2=43.59
+
+k=3:
+V=1.873*10^5
+A=2.042*10^4
+
+k=4:
+V=1.158*10^5
+A=1.262*10^4
+
+k=5:
+V=9.602*10^4
+A=1.046*10^4
+
+k=6:
+V=9.132*10^4
+A=9951.74
+
+
+n=4, octahedral symmetry:
+
+k=2:
+V=2.645*10^5
+A=2.645*10^4
+
+k=3:
+V=1.418*10^5
+A=1.418*10^4
+
+k=4:
+radius: 30mm
+V=1.228*10^5/30^3=4.548
+A=1.228*10^4
+
+theoretical value:
+http://paulbourke.net/geometry/cylinders/
+v=12*(sqrt(8) - sqrt(6)) = 4.547
+
+
+
+n=3:
+k=3:
+radius: 30mm
+area: 1.265E+04 mm^2
+volume: 1.265E+05 mm^3
+
+volume factor: 1.265*10^5/30^3=4.685
+area factor: 1.265*10^4/30^2=14.055
+
+Theoretical value:
+https://en.wikipedia.org/wiki/Steinmetz_solid#Tricylinder
+
+V=8*(2-sqrt(2))
+A=24*(2-sqrt(2))
+
+k=2:
+radius: 30mm
+area: 1.789E+04 mm^2
+volume: 1.789E+05 mm^3
+volume factor: 1.789*10^5/30^3=6.626
+area factor: 1.789*10^4/30^2=19.88
