@@ -2,7 +2,7 @@
 
 exportToPov = True;
 plotPoints = 40;
-maxRecursion = 2;
+maxRecursion = 1;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 0.9;
 r = 1;
@@ -22,8 +22,8 @@ outsideConstraint[x_, y_, z_, vertices_, verticesIndices_] :=
 
 colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Purple}, RandomColor[100]];
 
-(* shape = "Octahedron"; *)
-shape = "Icosahedron";
+shape = "Octahedron";
+(* shape = "Icosahedron"; *)
 (* shape = "Cube"; *)
 (* shape = "Dodecahedron"; *)
 (* shape = "Cuboctahedron"; *)
@@ -74,6 +74,100 @@ For[intersectionLevel = 1, intersectionLevel <= 1, intersectionLevel++,
 
         Table[k, {k, 1, Length[cylinders]}]
     ];
+
+    ends = {
+        ContourPlot3D[y == -3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        x^2 + z^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[1]]] , Opacity[opacity] } }
+                ],
+
+        ContourPlot3D[y == 3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        x^2 + z^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[1]]] , Opacity[opacity] } }
+                ],
+
+        ContourPlot3D[x == 3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        y^2 + z^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[3]]] , Opacity[opacity] } }
+                ],
+
+        ContourPlot3D[x == -3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        y^2 + z^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[3]]] , Opacity[opacity] } }
+                ],
+
+        ContourPlot3D[z == 3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        y^2 + x^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[2]]] , Opacity[opacity] } }
+                ],
+
+        ContourPlot3D[z == -3, 
+                    {x, -plotRange, plotRange}, {y, -plotRange, plotRange}, {z, -plotRange, plotRange},
+                    Axes -> None, 
+                    (* BoundaryStyle -> Red, *)
+                    PlotPoints -> plotPoints, 
+                    MaxRecursion -> maxRecursion,
+                    ViewPoint -> viewPoint,
+                    Lighting -> lighting,
+                    RegionFunction -> Function[
+                        {x, y, z},
+                        y^2 + x^2 <= 1
+                    ],
+                    MeshFunctions -> {0 &}, MeshShading -> { { Lighter[colors[[2]]] , Opacity[opacity] } }
+                ]
+
+    };
+    plots = Union[plots, ends];
     graph = Apply[Show, plots];
 
     outputFolder = "output/";
