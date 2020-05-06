@@ -93,7 +93,7 @@ For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
     graph = Apply[Show, plots];
     Print["created graph"];
 
-    outputFolder = "output/";
+    outputFolder = "output/cylinders/";
     outputFileName = outputFolder <> shape <> "_surface_" <> If[exportToPov, "pov_", "native_"] <> IntegerString[Length[cylinders]] <> "_" <> IntegerString[intersectionLevel] <>  "_" <> IntegerString[plotPoints] <> ".png";
 
     imageSize = {600, 450};

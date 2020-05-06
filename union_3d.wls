@@ -170,7 +170,7 @@ For[intersectionLevel = 1, intersectionLevel <= 1, intersectionLevel++,
     plots = Union[plots, ends];
     graph = Apply[Show, plots];
 
-    outputFolder = "output/";
+    outputFolder = "output/cylinders/";
     outputFileName = outputFolder <> shape <> "_union_" <> If[exportToPov, "pov_", "native_"] <> IntegerString[Length[cylinders]] <> "_" <> IntegerString[intersectionLevel] <>  "_" <> IntegerString[plotPoints] <> ".png";
 
     imageSize = {600, 450};
