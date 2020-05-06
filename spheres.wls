@@ -1,11 +1,19 @@
 #!/usr/bin/env wolframscript
 
 exportToPov = True;
-plotPoints = 20;
+plotPoints = 30;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
-opacity = 0.7;
+opacity = 1;
 r = 1;
+plotRangeFactor = 1.1;
+
+(* shape = "Tetrahedron"; *)
+(* shape = "Octahedron"; *)
+shape = "Icosahedron";
+(* shape = "Cube"; *)
+(* shape = "Dodecahedron"; *)
+
 
 start = AbsoluteTime[];
 Needs["POVRayRender`"];
@@ -24,27 +32,13 @@ outsideConstraint[x_, y_, z_, vertices_, radius_, verticesIndices_] :=
 
 colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Purple}, RandomColor[100]];
 
-(* shape = "Tetrahedron"; *)
-(* shape = "Octahedron"; *)
-(* shape = "Icosahedron"; *)
-shape = "Cube";
-(* shape = "Dodecahedron"; *)
-(* shape = "Cuboctahedron"; *)
-(* shape = "Icosidodecahedron"; *)
+vertices = PolyhedronData[shape, "VertexCoordinates"];
+Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
-For[intersectionLevel = 2, intersectionLevel <= 6, intersectionLevel++,
+For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLevel++,
+    startIteration = AbsoluteTime[];
+
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
-
-    plotRangeMap = <|
-        "Tetrahedron" -> 1.8 - intersectionLevel * 0.25,
-        "Octahedron" -> 1,
-        "Cube" -> 1.5 - intersectionLevel * 0.025,
-        "Icosahedron" -> 2.2 - intersectionLevel * 0.1,
-        "Dodecahedron" -> 3.2 - intersectionLevel * 0.2,
-        "Cuboctahedron" -> 2.0 - intersectionLevel * 0.07,
-        "Icosidodecahedron" -> 3.2 - intersectionLevel * 0.1
-    |>;
-    plotRange = plotRangeMap[shape];
 
     viewPointMap = <|
         "Tetrahedron" -> {5, -3, 3},
@@ -58,9 +52,6 @@ For[intersectionLevel = 2, intersectionLevel <= 6, intersectionLevel++,
 
     viewPoint = viewPointMap[shape];
 
-    vertices = PolyhedronData[shape, "VertexCoordinates"];
-    Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
-
     indicesList = {};
     allIndices = Table[k, {k, 1, Length[vertices]}];
     For[i = 1, i <= Length[vertices], i++,
@@ -70,10 +61,18 @@ For[intersectionLevel = 2, intersectionLevel <= 6, intersectionLevel++,
         indicesList = Join[indicesList, indices]
     ];
 
-    (* indicesList = { indicesList[[1]], indicesList[[2]] }; *)
-
     Print["Segments to plot: " <> IntegerString[Length[indicesList]]];
-    (* Print[indicesList]; *)
+
+    rsquares = Map[
+    NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
+                        outsideConstraint[x, y, z, vertices, r, #[[3]] ] &&
+                        constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
+                        },
+                        {x, y, z}
+    ][[1]]&, indicesList];
+    plotRange = N[Sqrt[Max[rsquares]]];
+    Print["plotRange: " <> ToString[plotRange]];
+    plotRange = plotRange * plotRangeFactor;
 
     plots = Map[
                 ContourPlot3D[constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0, 
@@ -115,9 +114,13 @@ For[intersectionLevel = 2, intersectionLevel <= 6, intersectionLevel++,
         Export[outputFileName, graph];
     ];
     Print["Saved the image to " <> outputFileName];
+    
+    endIteration = AbsoluteTime[];
+    Print["Elapsed time in seconds, in this iteration"];
+    Print[endIteration - startIteration];
 ];
 
 
 end = AbsoluteTime[];
-Print["Elapsed time in seconds"];
+Print["Elapsed time in seconds in total"];
 Print[end - start];
