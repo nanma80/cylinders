@@ -97,9 +97,8 @@ For[intersectionLevel = 10, intersectionLevel <= Length[vertices], intersectionL
     Print["created graph"];
 
     outputFolder = "output/spheres/";
-    outputFileName = outputFolder <> shape <> 
-        "_surface_" <> If[exportToPov, "pov_", "native_"] 
-        <> IntegerString[Length[cylinders]] <> "_" 
+    outputFileName = outputFolder <> shape 
+        <> "_surface_"
         <> IntegerString[intersectionLevel] <>  "_" 
         <> IntegerString[plotPoints] <> ".png";
 
