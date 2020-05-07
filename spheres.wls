@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 
 exportToPov = True;
-plotPoints = 30;
+plotPoints = 40;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 1;
@@ -35,7 +35,7 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 vertices = PolyhedronData[shape, "VertexCoordinates"];
 Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
-For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLevel++,
+For[intersectionLevel = 5, intersectionLevel <= Length[vertices], intersectionLevel++,
     startIteration = AbsoluteTime[];
 
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
@@ -64,12 +64,12 @@ For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLe
     Print["Segments to plot: " <> IntegerString[Length[indicesList]]];
 
     rsquares = Map[
-    NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
-                        outsideConstraint[x, y, z, vertices, r, #[[3]] ] &&
-                        constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
-                        },
-                        {x, y, z}
-    ][[1]]&, indicesList];
+        NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
+                            (* outsideConstraint[x, y, z, vertices, r, #[[3]] ] && *)
+                            constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
+                            },
+                            {x, y, z}
+        ][[1]]&, indicesList];
     plotRange = N[Sqrt[Max[rsquares]]];
     Print["plotRange: " <> ToString[plotRange]];
     plotRange = plotRange * plotRangeFactor;
