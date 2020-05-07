@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 
 exportToPov = True;
-plotPoints = 40;
+plotPoints = 50;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 1;
@@ -35,7 +35,7 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 vertices = PolyhedronData[shape, "VertexCoordinates"];
 Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
-For[intersectionLevel = 5, intersectionLevel <= Length[vertices], intersectionLevel++,
+For[intersectionLevel = 10, intersectionLevel <= Length[vertices], intersectionLevel++,
     startIteration = AbsoluteTime[];
 
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
