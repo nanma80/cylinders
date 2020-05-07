@@ -94,8 +94,7 @@ For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
     Print["created graph"];
 
     outputFolder = "output/spheres/";
-    outputFileName = outputFolder <> shape 
-        <> "_surface_"
+    outputFileName = outputFolder <> shape <> "_"
         <> IntegerString[intersectionLevel] <>  "_" 
         <> IntegerString[plotPoints] <> ".png";
 
