@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 
 exportToPov = True;
-plotPoints = 50;
+plotPoints = 40;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 1;
@@ -10,17 +10,14 @@ plotRangeFactor = 1.1;
 
 (* shape = "Tetrahedron"; *)
 (* shape = "Octahedron"; *)
-shape = "Icosahedron";
+(* shape = "Icosahedron"; *)
 (* shape = "Cube"; *)
-(* shape = "Dodecahedron"; *)
-
+shape = "Dodecahedron";
 
 start = AbsoluteTime[];
 Needs["POVRayRender`"];
 ConfigurePOVRayRender["POVRayPath" -> "C:\\Program Files\\POV-Ray\\v3.7\\bin\\pvengine64.exe"];
 
-
-(* constraint[x_, y_, z_, direction_] := {x,y,z}.{x,y,z} - ({x,y,z}.direction)^2/(direction.direction) - r^2; *)
 constraint[x_, y_, z_, center_, radius_] := ({x,y,z} - center).({x,y,z} - center) - radius^2;
 
 insideConstraint[x_, y_, z_, vertices_, radius_, verticesIndices_] := 
@@ -35,7 +32,8 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 vertices = PolyhedronData[shape, "VertexCoordinates"];
 Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
-For[intersectionLevel = 10, intersectionLevel <= Length[vertices], intersectionLevel++,
+(* For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLevel++, *)
+For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
     startIteration = AbsoluteTime[];
 
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
@@ -65,7 +63,6 @@ For[intersectionLevel = 10, intersectionLevel <= Length[vertices], intersectionL
 
     rsquares = Map[
         NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
-                            (* outsideConstraint[x, y, z, vertices, r, #[[3]] ] && *)
                             constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
                             },
                             {x, y, z}
