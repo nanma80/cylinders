@@ -5,14 +5,16 @@ plotPoints = 40;
 maxRecursion = 2;
 lighting = {{"Point", White, {10, -10, 10}}};
 opacity = 1;
+sphereOpacity = 0.2;
+showSpheres = True;
 r = 1;
 plotRangeFactor = 1.1;
 
-(* shape = "Tetrahedron"; *)
+shape = "Tetrahedron";
 (* shape = "Octahedron"; *)
 (* shape = "Icosahedron"; *)
 (* shape = "Cube"; *)
-shape = "Dodecahedron";
+(* shape = "Dodecahedron"; *)
 
 start = AbsoluteTime[];
 Needs["POVRayRender`"];
@@ -32,8 +34,8 @@ colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Pur
 vertices = PolyhedronData[shape, "VertexCoordinates"];
 Print["Number of vertices to plot: " <> IntegerString[Length[vertices]]];
 
-(* For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLevel++, *)
-For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
+For[intersectionLevel = 2, intersectionLevel <= Length[vertices], intersectionLevel++,
+(* For[intersectionLevel = 4, intersectionLevel <= 4, intersectionLevel++, *)
     startIteration = AbsoluteTime[];
 
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
@@ -61,13 +63,17 @@ For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
 
     Print["Segments to plot: " <> IntegerString[Length[indicesList]]];
 
-    rsquares = Map[
-        NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
-                            constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
-                            },
-                            {x, y, z}
-        ][[1]]&, indicesList];
-    plotRange = N[Sqrt[Max[rsquares]]];
+    plotRange = If[showSpheres,
+        N[Norm[vertices[[1]]] + r],
+        rsquares = Map[
+            NMaximize[{x^2+y^2+z^2, insideConstraint[x, y, z, vertices, r, #[[2]] ] &&
+                                constraint[x, y, z, vertices[[ (#[[1]][[1]]) ]], r ] == 0
+                                },
+                                {x, y, z}
+            ][[1]]&, indicesList];
+        N[Sqrt[Max[rsquares]]]
+    ];
+
     Print["plotRange: " <> ToString[plotRange]];
     plotRange = plotRange * plotRangeFactor;
 
@@ -88,6 +94,10 @@ For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
                 ]&,
             indicesList];
 
+    If[showSpheres,
+        spherePlots = Table[Graphics3D[{Lighter[colors[[k]]], Opacity[sphereOpacity], Sphere[vertices[[k]], r]}], {k, 1, Length[vertices]}];
+        plots = Join[plots, spherePlots];
+    ];
 
     Print["creating graph"];
     graph = Apply[Show, plots];
@@ -96,7 +106,9 @@ For[intersectionLevel = 3, intersectionLevel <= 10, intersectionLevel++,
     outputFolder = "output/spheres/";
     outputFileName = outputFolder <> shape <> "_"
         <> IntegerString[intersectionLevel] <>  "_" 
-        <> IntegerString[plotPoints] <> ".png";
+        <> IntegerString[plotPoints] 
+        <> If[showSpheres, "_spheres", ""]
+        <> ".png";
 
     imageSize = {600, 450};
         cropCommand = "mogrify -crop " <> IntegerString[imageSize[[2]]] <> "x" <> IntegerString[imageSize[[2]]] <> "+" <> IntegerString[(imageSize[[1]]-imageSize[[2]])/2] <> "+0 " <> outputFileName;
