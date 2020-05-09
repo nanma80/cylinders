@@ -10,9 +10,9 @@ showSpheres = True;
 r = 1;
 plotRangeFactor = 1.1;
 
-shape = "Tetrahedron";
+(* shape = "Tetrahedron"; *)
 (* shape = "Octahedron"; *)
-(* shape = "Icosahedron"; *)
+shape = "Icosahedron";
 (* shape = "Cube"; *)
 (* shape = "Dodecahedron"; *)
 
