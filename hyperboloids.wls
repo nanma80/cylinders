@@ -1,12 +1,13 @@
 #!/usr/bin/env wolframscript
 
-exportToPov = True;
-plotPoints = 40;
-maxRecursion = 2;
-opacity = 0.9;
+exportToPov = False;
+plotPoints = 20;
+maxRecursion = 1;
+opacity = 1;
 r = 1;
-hyperbolaParameter = 0.05;
-randomView = False;
+(* hyperbolaParameter = 0.05; *)
+hyperbolaParameter = 1;
+randomView = True;
 edgeOnly = False;
 
 start = AbsoluteTime[];
@@ -18,6 +19,7 @@ rotation = If[randomView, IdentityMatrix[3], RotationMatrix[{{0, 0, 1}, viewPoin
 lighting = {{"Point", White, viewPoint * 10}};
 
 constraint[x_, y_, z_, direction_] := {x,y,z}.{x,y,z} - (1 + hyperbolaParameter) * ({x,y,z}.rotation.direction)^2/(direction.direction) - r^2;
+
 insideConstraint[x_, y_, z_, vertices_, verticesIndices_] := 
     Apply[And, Map[constraint[x, y, z, vertices[[ # ]] ] <= 0&, verticesIndices]];
 
@@ -28,11 +30,11 @@ outsideConstraint[x_, y_, z_, vertices_, verticesIndices_] :=
 colors = Join[{Red, Blue, Green, Yellow, Magenta, Cyan, Brown, Orange, Pink, Purple}, RandomColor[100]];
 
 (* shape = "Octahedron"; *)
-(* shape = "Icosahedron"; *)
+shape = "Icosahedron";
 (* shape = "Cube"; *)
 (* shape = "Dodecahedron"; *)
 (* shape = "Cuboctahedron"; *)
-shape = "Icosidodecahedron";
+(* shape = "Icosidodecahedron"; *)
 
 For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
     Print["intersectionLevel: " <> IntegerString[intersectionLevel] <> " shape: " <> shape];
@@ -46,6 +48,7 @@ For[intersectionLevel = 2, intersectionLevel <= 2, intersectionLevel++,
         "Icosidodecahedron" -> 3.2 - intersectionLevel * 0.1
     |>;
     plotRange = plotRangeMap[shape] * If[intersectionLevel <= 2, 1.5, 1.3];
+    (* plotRange = 20; *)
     (* for icosidodecahedron, level 2, 0.05, * 1.3 is a little too small. Should try 1.5 *)
 
     viewPointMap = <|
